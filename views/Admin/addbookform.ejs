@@ -1,0 +1,123 @@
+<%- include partials/navbar.ejs %>
+
+
+  <!-- Main Content -->
+  <main class="container">
+
+    <div style="margin-bottom: 50px;">
+      <img alt="logo" src="../../Assets/images/dronelogo.avif" class="mx-auto d-block"
+        style="width: 200px;border:5px solid gray"><br>
+      <h1 class="text-center border border-2" style="padding: 10px; background: #0084ab52;">Book Upload</h1>
+
+      <form action="/admin/create-book" method="post" id="bookform" enctype="multipart/form-data" style="padding: 30px;"
+        class="mx-auto d-block border border-2">
+        <div class="form-group">
+          <label for="title">Title</label>
+          <input name="title" type="text" class="form-control" id="title" placeholder="Enter Book Title" required>
+        </div>
+
+        <div class="form-group">
+          <label for="isbn">ISBN</label>
+          <input name="isbn" type="text" class="form-control" id="isbn" placeholder="Enter ISBN">
+        </div>
+
+        <div class="form-group">
+          <label for="authors">Author(s)</label>
+          <input name="author" type="text" class="form-control" id="authors" placeholder="Enter Authors">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="genre">Genre</label>
+
+            <input list="genres" class="form-control" id="genre" name="genre">
+            <datalist id="genres">
+              <option value="Kids">Kids</option>
+              <option value="Fiction">Fiction</option>
+              <option value="Non-Fiction">Non-Fiction</option>
+              <option value="Text-Book">Text-Book</option>
+              <option value="other">other</option>
+            </datalist>
+
+          </div>
+
+          <div class="form-group col-md-6">
+            <label for="publishedDate">Published Date</label>
+            <div class="input-group">
+              <span class="input-group-prepend">
+                <span class="input-group-text">Date</span>
+              </span>
+              <input name="publishedDate" type="date" class="form-control" id="publishedDate"
+                placeholder="Enter Published Date">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <div class="form-group">
+              <label for="copiesAvailable">Copies Available</label>
+              <input type="number" name="copiesAvailable" class="form-control" id="copiesAvailable" min="1" max="3"
+                value="1" />
+
+            </div>
+
+          </div>
+          <div class="form-group col-md-6">
+
+            <label for="weight">Weight - useful for Delivery Estimation</label>
+            <div class="input-group">
+
+              <input type="number" name="weight" class="form-control" id="weight" min="1" max="3" value="1" />
+              <span class="input-group-prepend">
+                <span class="input-group-text">lbs</span>
+              </span>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea placeholder="Enter Book Description" name="description" class="form-control" id="description"
+            rows="4"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="formFile">Upload Book Image</label>
+          <input name="image" type="file" multiple accept="image/*" onchange="handleFileChange(event)"
+            class="form-control-file" id="formFile">
+          <br>
+          <img id="imagePreview" src="" class="img-thumbnail"
+            style="max-width: 100px; max-height: 100px; object-fit: contain;">
+        </div>
+
+        <button class="btn btn-primary" type="submit">Upload Book</button>
+        <a href="/admin/bookmgmt" class="btn btn-danger" style="margin-left: 20px;">Cancel</a>
+
+      </form>
+    </div>
+
+
+
+  </main>
+
+
+  <script>
+    function handleFileChange(event) {
+      var fileInput = event.target;
+      var imagePreview = document.getElementById('imagePreview');
+
+      if (fileInput.files && fileInput.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          imagePreview.src = e.target.result;
+        }
+        reader.readAsDataURL(fileInput.files[0]);
+      } else {
+        imagePreview.src = "";
+      }
+    }
+  </script>
+
+  <%- include partials/footer.ejs %>

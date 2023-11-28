@@ -1,0 +1,122 @@
+
+<%- include partials/navbar.ejs %>
+
+<h2>Return a Book</h2>
+<form id="returnForm">
+  <label for="returnBookID">Book ID:</label>
+  <input type="text" id="returnBookID" name="returnBookID" required>
+
+  <button type="submit">Return</button>
+</form>  
+<div id="error" style="color:red; font-weight: bold;"></div>
+<br />
+<br />
+
+ <table id="transactionTable" border="1">
+  <thead>
+    <tr>
+      <td>Book ID</td>
+      <td>Transaction Date</td>
+      <td>Status</td>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- Table rows will be populated with data fetched from /transactions endpoint -->
+  </tbody>
+</table>
+
+
+<script>
+
+  let list = [
+    //{
+    //  customerid: 1,
+    //  bookid: 1,
+    //  trxndate: '2021-10-01',
+    //  returndate: '2021-10-08'
+    //}, // this is test data
+  ]
+    /////////////////need to work in the script///////////
+  // Function to populate the transactions table with data
+  async function populateTransactionTable() {
+    const tableBody = document.querySelector('#transactionTable tbody');
+    tableBody.innerHTML = ''; // Clear existing table rows
+    
+    list.forEach(transaction => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${transaction.bookid}</td>
+        <td>${transaction.trxndate}</td>
+      `;
+      tableBody.appendChild(row);
+    });
+  }
+
+  // Return Form submission handling
+  document.getElementById('returnForm').addEventListener('submit', async function(event) {
+    event.preventDefault();
+    const returnBookID = document.getElementById('returnBookID').value;
+
+    // Prepare the data to be sent in the request body
+    const now = new Date()
+    const isoDate = now.toISOString();
+    const data = {
+      customerid: 0,
+      bookid: returnBookID,
+      trxndate: isoDate.split("T")[0],
+      trxntype: 'return',
+    };
+
+    // Send a POST request using fetch API to the /transaction endpoint
+    fetch('/books/v1/addreturn', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(response => {
+      console.log('Return Request Response:', response);
+      // Handle the response from the server as needed (e.g., show success message, error message, etc.)
+      if (response.status === 500){
+        document.getElementById('error').innerHTML = response.error
+      } else {
+        data.status = "success"
+        list.push(data) // add current trasaction to the list
+        document.getElementById('error').innerHTML = ''
+        document.getElementById('returnBookID').value = '';
+        populateTransactionTable()
+      }
+      // Handle the response from the server as needed (e.g., show success message, error message, etc.)
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      // Handle any errors that occurred during the request
+    });
+
+    // Clear the form field after submission
+    document.getElementById('returnBookID').value = '';
+    
+    populateTransactionTable()
+  });
+  
+  populateTransactionTable()
+  
+  
+</script>
+
+
+<br />
+<br />
+<%- include partials/footer.ejs %>
+  
+
+
+
+

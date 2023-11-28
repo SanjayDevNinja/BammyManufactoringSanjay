@@ -1,0 +1,141 @@
+
+<%- include partials/navbar.ejs %>
+  
+<h2>Borrow a Book</h2>
+
+<!-- Borrow Form -->
+<form id="borrowForm">
+  <label for="libraryCard">Library Card Number:</label>
+  <input type="text" id="libraryCard" name="libraryCard" required>
+
+  <label for="bookID">Book ID:</label>
+  <input type="text" id="bookID" name="bookID" required>
+
+  <button type="submit">Borrow</button>
+</form>
+
+<div id="error" style="color:red; font-weight: bold;"></div>
+
+<br />
+<br />
+
+ <table id="transactionTable" border="1">
+  <thead>
+    <tr>
+
+      <th>Customer ID</th>
+      <th>Book ID</th>
+      <th>Transaction Date</th>
+      <th>Return Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- Table rows will be populated with data fetched from /transactions endpoint -->
+  </tbody>
+</table>
+
+
+<script>
+
+let list = [
+  //{
+  //  customerid: 1,
+  //  bookid: 1,
+  //  trxndate: '2021-10-01',
+  //  returndate: '2021-10-08'
+  //} //this is demo line for the transction
+]
+// Function to populate the transactions table with data
+async function populateTransactionTable() {
+  const tableBody = document.querySelector('#transactionTable tbody');
+  tableBody.innerHTML = ''; // Clear existing table rows
+  
+  //let res = await fetch('/transactions')
+  //let answer = await res.json()
+
+  list.forEach(transaction => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${transaction.customerid}</td>
+      <td>${transaction.bookid}</td>
+      <td>${transaction.trxndate}</td>
+      <td>${transaction.returndate}</td>
+    `;
+    tableBody.appendChild(row);
+  });
+}
+
+  // Borrow Form submission handling
+  document.getElementById('borrowForm').addEventListener('submit', async function(event) {
+    event.preventDefault();
+    const libraryCard = document.getElementById('libraryCard').value;
+    const bookID = document.getElementById('bookID').value;
+
+    // Prepare the data to be sent in the request body
+    const now = new Date()
+    const returnDate = new Date().setDate(new Date().getDate() + 7)
+    const isoDate = now.toISOString();
+    let data =   {
+      customerid: libraryCard,
+      bookid: bookID,
+      trxndate: now.toISOString().split("T")[0],
+      //how to add 7 days to the date 
+      returndate: returnDate,
+    }
+
+    // Send a POST request using fetch API to the /transaction endpoint
+    fetch('/books/v1/addborrow', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+    .then(response => {
+      if (!response.ok) {
+        console.log("this is response")
+        console.log(response)
+        console.log(response.error)
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(response => {
+      console.log('Borrow Request Response:', response);
+      if (response.status === 500){
+        document.getElementById('error').innerHTML = response.error
+      } else {
+        list.push(data) // add current trasaction to the list
+        document.getElementById('error').innerHTML = ''
+        document.getElementById('libraryCard').value = '';
+        document.getElementById('bookID').value = '';
+        console.log(data)
+        populateTransactionTable()
+      }
+      // Handle the response from the server as needed (e.g., show success message, error message, etc.)
+
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      // Handle any errors that occurred during the request
+    });
+
+    // Clear the form fields after submission
+
+    populateTransactionTable()
+  });
+  
+  populateTransactionTable()
+  
+  
+</script>
+
+<br />
+<br />
+  
+<%- include partials/footer.ejs %>
+  
+
+
+
+

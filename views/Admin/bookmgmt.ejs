@@ -1,0 +1,177 @@
+<%- include partials/navbar.ejs %>
+  <!-- change all time git -->
+  <!-- how to git https://stackoverflow.com/questions/1221840/remote-origin-already-exists-on-git-push-to-a-new-repository -->
+
+
+
+  <!-- Main Content -->
+  <div class="main">
+
+    <main class="container">
+
+      <% if (message) { %>
+
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          <strong>
+            <%= message %>
+          </strong>
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <% } %>
+
+          <!-- copy from booklist, need clean up code -->
+          <div class="jumbotron">
+            <h2>Available Books</h2>
+            <br />
+
+            <a href="/admin/create-book" class="btn btn-success " style="font-size: 1.3em;"><i
+                class="bi bi-database-add"></i> Create New Book Record</a>
+
+            <br /><br />
+
+            <p><b>Search the table for Book-Titles, or ISBN:</b></p>
+            <input class="form-control" id="myInput" type="text" placeholder="Search..">
+            <br />
+
+            <div class="container">
+              <style>
+                .table td {
+                  vertical-align: middle;
+                }
+                td, th {text-align: center;}
+              </style>
+              <table class="table">
+                <thead class="thead-dark">
+                  <tr>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>ISBN</th>
+                    <th>Genre</th>
+                    <th>Description</th>
+                    <th>Publish Date</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="myTable">
+
+                  <% books.forEach((book, index)=> { %>
+                    <tr>
+                      <td style="text-align:center;">
+                        <div style="display: inline-block;text-align: center;">
+                          <h6>
+                            <%= book.title %>
+                          </h6>
+                          <img id="bookImage<%=index%>" class="card-img-top" style="width:60px; object-fit: contain;"
+                            src="/<%=book.image%>" onerror="handleImageError(<%=index%>)" />
+                          <br>
+                          <small><b>Copies: </b>
+                            <%= book.copiesAvailable %>
+                          </small>
+                          <br>
+                          <small><b>Weight: </b>
+                            <%= book.weight %>
+                          </small>
+
+
+                        </div>
+                      </td>
+                      <td>
+                        <%= book.author %>
+                      </td>
+                      <td>
+                        <%= book.isbn %>
+                      </td>
+                      <td>
+                        <%= book.genre %>
+                      </td>
+                      <td>
+                        <p
+                          style="font-size: 16px;margin:0;max-width: 200px; white-space: nowrap;overflow: hidden; text-overflow: ellipsis;">
+                          <%= book.description %>
+                        </p>
+                      </td>
+                      <td>
+                        <%= book.publishedDate? new Date(book.publishedDate).toLocaleString("en-CA",{year: 'numeric'
+                          ,month: 'numeric' , day: 'numeric' }) : 'unspecified' %>
+                      </td>
+
+                      <td>
+
+                        <a class="btn btn-warning" style="font-size: 1.5em; float: left"
+                          href="/admin/update-book/<%= book._id %>"><i class="bi bi-pencil-square "></i></a>
+
+
+                        <!-- Button trigger modal -->
+                        <button style="font-size: 1.5em; float: right" type="button" class="btn btn-danger"
+                          data-toggle="modal" data-target="#exampleModal<%=index%>">
+                          <i class="bi bi-trash3-fill"></i>
+                        </button>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="exampleModal<%=index%>" tabindex="-1" aria-labelledby="exampleModalLabel"
+                          aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Delete Book Record?</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              <div class="modal-body">
+                                Are you sure you wish to Delete this book with title: <b>"<%=book.title%>"</b> ?
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                <a class="btn btn-danger" href="/admin/delete-book/<%= book._id %>"><i
+                                    class="bi bi-trash3-fill"></i>Delete</a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                      </td>
+                    </tr>
+
+                    <% }) %>
+
+                </tbody>
+              </table>
+
+
+
+            </div>
+          </div>
+    </main>
+  </div>
+
+
+
+  <script>
+    function handleImageError(index) {
+      var bookImage = document.getElementById('bookImage' + index);
+      bookImage.onerror = null; // prevents looping
+      bookImage.src = "/noImage.png";
+    }
+
+
+  </script>
+
+
+
+  <script>
+    $(document).ready(function () {
+      $("#myInput").on("keyup", function () {
+        var value = $(this).val().toLowerCase();
+        $("#myTable tr").filter(function () {
+          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+      });
+    });
+
+  </script>
+
+  <%- include partials/footer.ejs %>

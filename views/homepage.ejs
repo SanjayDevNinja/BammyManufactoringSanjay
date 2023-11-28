@@ -1,0 +1,217 @@
+<%- include partials/navbar.ejs %>
+  <!-- change all time git -->
+  <!-- how to git https://stackoverflow.com/questions/1221840/remote-origin-already-exists-on-git-push-to-a-new-repository -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"
+    integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script>
+
+    function qrcodeGen(index, bookid) {
+      const QRContainer = document.getElementById("qrcode-container" + index);
+      QRContainer.innerHTML = "";
+      new QRCode(QRContainer, {
+        text: window.location.href + "book-details/" + bookid,
+        width: 105,
+        height: 105
+        
+      });
+    }
+  </script>
+
+  <script src="/html5-qrcode/html5-qrcode.min.js"></script>
+
+
+  <!-- Main Content -->
+  <div class="main">
+    <header>
+      <div class="hero-section">
+        <div class="welcome-text">
+          <h1>Books On the Fly - Library Drone Delivery System</h1>
+          <p>Explore our collection of books and find your next adventure!</p>
+          <img src="../Assets/images/drone.jpg" alt="Drone image" class="w-50" />
+          <br /><br />
+          <p>Get books delivered to your home in 15 mins with Speedy Drone Delivery</p>
+
+        </div>
+        <div class="book-slider">
+          <div id="carouselExample" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+              <div class="carousel-item active">
+                <img src="../Assets/images/book1.jpg" alt="Book 1" class="d-block w-100" />
+              </div>
+              <div class="carousel-item">
+                <img src="../Assets/images/book2.jpg" alt="Book 2" class="d-block w-100" />
+              </div>
+              <div class="carousel-item">
+                <img src="../Assets/images/book3.jpg" alt="Book 3" class="d-block w-100" />
+              </div>
+              <!-- Add more book images as needed -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+
+
+      <style>
+        #QrDiv {
+          width:300px;
+          margin:auto;
+          display: block;
+        }
+
+        #reader {
+          width: 300px;
+         
+        }
+
+        #result {
+          text-align: center;
+          font-size: 1.5rem;
+        }
+      </style>
+
+      <div style="text-align: center; border: 3px dashed green;padding: 30px;">
+        <h1>Scan your book QR code for EASY SEARCHING!!!</h1>
+        <button onclick="startScan()" type="button" class="btn btn-success">QR Book Scan</button>
+        <br><br>
+
+        <div id="QrDiv">
+          <div id="reader"></div><br>
+          <div id="result"></div>
+        </div>
+      </div>
+      <br><br>
+
+      <script>
+
+        const scanner = new Html5QrcodeScanner('reader', {
+          // Scanner will be initialized in DOM inside element with id of 'reader'
+          qrbox: {
+            width: 125,
+            height: 125,
+          },  // Sets dimensions of scanning box (set relative to reader element width)
+          fps: 20, // Frames per second to attempt a scan
+        });
+
+
+        function startScan() {
+          scanner.render(success, error);
+          // Starts scanner
+        }
+
+
+        function success(result) {
+
+          document.getElementById('result').innerHTML = `
+            <h2>Success!</h2>
+            <p><a href="${result}">${result}</a></p>
+            `;
+          // Prints result as a link inside result element
+
+          scanner.clear();
+          // Clears scanning instance
+
+          //document.getElementById('reader').remove();
+          // Removes reader element from DOM since no longer needed
+
+        }
+
+        function error(err) {
+          console.error(err);
+          // Prints any errors to the console
+        }
+
+      </script>
+
+
+
+
+
+
+
+
+
+      <h2>Available Books</h2>
+
+      <p>Search all book details:</p>
+      <input class="form-control" id="myInput" type="text" placeholder="Search..">
+      <div class="card-group">
+        <% books.forEach(function(book,index) { %>
+          <div class="card"
+            style="margin: 15px;   min-width: 250px; max-width: 400px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+            <img src="/<%=book.image%>" class="card-img-top" alt="<%=book.title%>"
+              style="width: 100%; height: 200px; object-fit: contain; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); background-color: #a6a8e147;"
+              onerror="this.onerror=null;this.src='/noImage.png';">
+            <div class="card-body">
+              <h4 class="card-title" style="text-align: center;">
+                <%= book.title %>
+              </h4>
+              <i style="text-align: center; display: block;">by <%= book.author %></i>
+              <br />
+              <p><b>Genre:</b>
+                <%=book.genre%>
+              </p>
+              <hr>
+              <b>Description</b>
+              <p class="card-text"
+                style="min-height:27px ; white-space: nowrap;overflow: hidden; text-overflow: ellipsis;">
+                <%= book.description %>
+              </p>
+              <hr>
+
+
+              <!-- -----------------------------  -->
+              <div>
+                <a style="float: left;" href="/book-details/<%=book._id%>" class="btn btn-primary">Details</a>
+
+                <div style=" text-align: center;float: right;">
+                  <b>QR Code</b>
+                  <div id="qrcode-container<%=index%>"></div>
+                </div>
+              </div>
+
+              <script>
+                qrcodeGen(<%= index %>, '<%= book._id %>');
+              </script>
+
+              <!-- -----------------------------  -->
+
+            </div>
+            <div class="card-footer">
+              <small class="text-muted">
+
+                ISBN: <%= book.isbn %> <br>
+                  Published: <%= book.publishedDate? new
+                    Date(book.publishedDate).toLocaleString("en-CA",{year: 'numeric' ,month: 'long' , day: 'numeric' })
+                    : 'unspecified' %>
+                    <br>
+                    Copies Available: <%= book.copiesAvailable %> <br />
+                      Weight: <% book.weight %>
+              </small>
+            </div>
+          </div>
+          <% }); %>
+      </div>
+
+    </main>
+
+  </div>
+
+
+
+  <script>
+    $(document).ready(function () {
+      $("#myInput").on("keyup", function () {
+        var value = $(this).val().toLowerCase();
+        $(".card").filter(function () {
+          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+      });
+    });
+  </script>
+
+  <%- include partials/footer.ejs %>

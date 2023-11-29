@@ -16,10 +16,10 @@
           <p>Aritificial Intelligence - AI Ready!</p>
           <p>Track Bammy Production in Realtime with this portal</p>
           <img src="../Assets/images/bammylogo.png" alt="Drone image" style="width:150px" />
-          
+
 
         </div>
-  
+
       </div>
     </header>
 
@@ -31,17 +31,27 @@
       <div class="row">
         <div class="col-3">
           <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-            <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true">Production Stats</a>
-            <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false">Inventory Stats</a>
-            <a class="nav-link" id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false">Order Stats</a>
-           <!-- <a class="nav-link" id="v-pills-settings-tab" data-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="false">Settings</a>-->
+            <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab"
+              aria-controls="v-pills-home" aria-selected="true">Production Stats</a>
+            <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab"
+              aria-controls="v-pills-profile" aria-selected="false">Inventory Stats</a>
+            <a class="nav-link" id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages" role="tab"
+              aria-controls="v-pills-messages" aria-selected="false">Order Stats</a>
+            <!-- <a class="nav-link" id="v-pills-settings-tab" data-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="false">Settings</a>-->
           </div>
         </div>
         <div class="col-9">
           <div class="tab-content" id="v-pills-tabContent">
-            <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab"><h4>Production Stats</h4></div>
-            <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab"><h4>Inventory Stats</h4></div>
-            <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab"><h4>Order Stats</h4></div>
+            <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
+              <h4>Production Stats</h4>
+              <p><span id="counter">0</span> <i class="bi bi-plus-circle"></i> Bammies </p>
+            </div>
+            <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+              <h4>Inventory Stats</h4>
+            </div>
+            <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">
+              <h4>Order Stats</h4>
+            </div>
             <!--<div class="tab-pane fade" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">Settings</div>-->
           </div>
         </div>
@@ -49,13 +59,30 @@
 
 
 
-      
+
 
     </main>
 
   </div>
 
+  <script>
 
+    const ws = new WebSocket('ws://192.168.137.1:8999');
+
+    ws.addEventListener('open', (event) => {
+      ws.send(JSON.stringify({
+        'client': '8999',
+        'operation': 'connecting',
+        'data': {}
+      }));
+    });
+
+    ws.onmessage = message => {
+      counter.innerHTML = message.data.toString();
+      console.log(message.data.toString())
+    }
+
+  </script>
 
 
   <%- include partials/footer.ejs %>

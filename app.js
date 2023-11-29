@@ -24,7 +24,7 @@ let openRouter = require('./routes/open');
 
 let app = express();
 
-mongoose.connect("mongodb+srv://" + process.env.mongodbuser + ":" + process.env.mongodbpassword + "@dronelibrarycluster0.qkn9o64.mongodb.net/BammyManufacturingDB?retryWrites=true&w=majority", {
+mongoose.connect("mongodb+srv://" + process.env.mongodbuser + ":" + process.env.mongodbpassword + "@dronelibrarycluster0.qkn9o64.mongodb.net/DroneLibraryDB?retryWrites=true&w=majority", {
   useNewUrlParser: true, 
   useUnifiedTopology: true
 }, (err) => {

@@ -38,7 +38,8 @@
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
     "popper.js": "^1.16.1",
-    "qrcode": "^1.5.3"
+    "qrcode": "^1.5.3",
+    "ws": "^8.14.2"
   },
   "description": "app for project I library",
   "main": "index.js",

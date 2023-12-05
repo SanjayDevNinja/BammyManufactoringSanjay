@@ -43,8 +43,52 @@
         <div class="col-9">
           <div class="tab-content" id="v-pills-tabContent">
             <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
-              <h4>Production Stats</h4>
-              <p><span id="counter">0</span> <i class="bi bi-plus-circle"></i> Bammies </p>
+
+
+
+
+              <div class="card-deck">
+                <div class="card">
+                  <img src="../Assets/images/production.png" class="card-img-top" alt="production">
+                  <div class="card-body">
+                    <h5 class="card-title">Production Stats</h5>
+                    <h3> <i class="bi bi-plus-circle"></i> Total Bammies: <span id="counter">0</span></h3>
+
+                    <h3>Gross $$: <span id="gross"></span></h3>
+                    <button id="danger" type="button" class="btn btn-danger">Emergency Danger</button>
+                    
+                  </div>
+                </div>
+                <div class="card">
+                  <img src="../Assets/images/order.png" class="card-img-top" alt="...">
+                  <div class="card-body">
+                    <h5 class="card-title">Order Stats</h5>
+                    <div class="form-group">
+                      <label for="exampleInputEmail1">Enter Number of Bammies</label>
+                      <input type="number" value=0 class="form-control" id="order" aria-describedby="emailHelp">
+                      <label for="exampleInputEmail1">Unit Cost</label>
+                      <input type="number" step="0.01" value=7.99 class="form-control" id="cost" aria-describedby="emailHelp">
+                      <br>
+
+                     
+                    </div>
+                    
+                  </div>
+                </div>
+                <div class="card">
+                  <img src="../Assets/images/inventory.png" class="card-img-top" alt="...">
+                  <div class="card-body">
+                    <h5 class="card-title">Inventory Stats</h5>
+                    <div class="form-group">
+                      <label for="exampleInputEmail1">Enter Cassava in grams</label>
+                      <input type="number" value="400" step=400 class="form-control" id="grams" aria-describedby="emailHelp">
+                      
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
             </div>
             <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
               <h4>Inventory Stats</h4>
@@ -67,20 +111,24 @@
 
   <script>
 
-    const ws = new WebSocket('wss://bammyproduction.onrender.com:8999');
-
-    ws.addEventListener('open', (event) => {
-      ws.send(JSON.stringify({
-        'client': '8999',
-        'operation': 'connecting',
-        'data': {}
-      }));
-    });
+    const ws = new WebSocket('ws://192.168.137.1:8887');
 
     ws.onmessage = message => {
       counter.innerHTML = message.data.toString();
       console.log(message.data.toString())
+
+      grams.value = grams.value - 400;
+      if (grams.value < 800){
+        alert("Reorder Cassava");
+      }
+
+      gross.innerHTML = (Number(counter.innerHTML) * cost.value).toFixed(2)
     }
+
+    document.getElementById('danger').addEventListener('click', () => {
+
+      ws.send('start');
+    });
 
   </script>
 

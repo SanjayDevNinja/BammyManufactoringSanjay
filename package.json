@@ -41,18 +41,10 @@
     "qrcode": "^1.5.3",
     "ws": "^8.14.2"
   },
-  "description": "app for project I library",
-  "main": "index.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/tsiliopoulos/COMP229-F2020-Week3.git"
-  },
-  "author": "COMP313 Team 3",
+  
+  "author": "Sanjay",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/tsiliopoulos/COMP229-F2020-Week3/issues"
-  },
-  "homepage": "https://github.com/tsiliopoulos/COMP229-F2020-Week3#readme",
+ 
   "devDependencies": {
     "concurrently": "^8.2.0",
     "http-server": "^14.1.1"

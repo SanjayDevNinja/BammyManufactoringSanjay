@@ -16,40 +16,26 @@ let connections = {
 }
 
 // Clients
-const wss = new WebSocket.Server({ port: '8999' }, () => console.log(`WS Server is listening at 8999`));
+const wss = new WebSocket.Server({ port: '8887' }, () => console.log(`WS Server is listening at 8887`));
 
-wss.on('connection', ws => {
-  ws.on('message', data => {
-    if (ws.readyState !== ws.OPEN) return;
-    connectedClients.push(ws);
-  })
+wss.on('connection', (ws) => {
+  //console.log('Client connected');
 
-});
-
-
-
-// Sensors
-Object.entries(connections).forEach(([key, settings]) => {
-  const connection = connections[key];
-  connection.sensors = {};
-
-  new WebSocket.Server({ port: settings.port }, () => console.log(`WS Server is listening at ${settings.port}`)).on('connection', (ws) => {
-    ws.on('message', data => {
-     
-        console.log(data.toString());
-      if (ws.readyState !== ws.OPEN) return;
-      if (typeof data === 'object') {
-        connection.sensors = data.toString();
-        // For a future video, taking care of video stream from ESP32 Cam
-      } else {
-        connection.sensors = data.toString();
+  ws.on('message', (message) => {
+    console.log(`Received message from webpage: ${message}`);
+    // Forward the message to the NodeMCU
+    // Adjust the logic based on your needs
+    wss.clients.forEach((client) => {
+      if (client !== ws && client.readyState === WebSocket.OPEN) {
+        client.send(message.toString());
       }
-      connectedClients.forEach(client => {
-        client.send(data.toString());
-      });
     });
   });
 });
+
+
+
+
 
 
 
